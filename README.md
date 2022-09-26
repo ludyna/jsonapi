@@ -44,7 +44,9 @@ API user can then use JSON Web Token received from auth/login to access other AP
 
 User tokens expire automatically by Redis every 30 min. So if API users want to get another token, they can POST auth/login again.
 
-API users can use auth/logout to logout and delete the current user token.
+You can use auth/logout to log out and delete the current user token.
+
+I use JSON Serializer (in the app/serializable folder) to help render User objects to JSON.
 
 # What I would add
 
