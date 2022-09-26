@@ -12,13 +12,12 @@ class UsersController < ApplicationController
 	def index
 		# Show first 20
 		users = Kredis.redis.keys("*users*")[0..20].map { |name| User.find_by_username(name.split(":")[1]) }
-
 		render jsonapi: users
 	end 
 
 	# GET /users/{username}
 	def show
-		render jsonapi: @user
+		render jsonapi: @user, status: :ok
 	end
 
 	# POST /users
@@ -34,15 +33,19 @@ class UsersController < ApplicationController
 	end 
 
 	# PUT /users/{username}
-	def update 
+	def update  
 		unless @user.update(user_params)
 			render jsonapi_errors: @user.errors, status: :unprocessable_entity
 		end
+
+		render status: :ok
 	end
 
 	# DELETE /users/{username}
 	def destroy 
 		@user.destroy
+
+		render status: :ok
 	end 
 
 	private 
@@ -53,6 +56,7 @@ class UsersController < ApplicationController
 
 		def set_user
 			@user = User.find_by_username(params[:id])
+			render status: :not_found and return if @user.blank?
 		end
 
 end

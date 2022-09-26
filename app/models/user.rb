@@ -36,12 +36,12 @@ class User
 
 			redis_key = user_redis_key(username)
 
-			raise ActiveRecord::RecordNotFound if !Kredis.redis.exists?(redis_key)
+			return nil if !Kredis.redis.exists?(redis_key)
 
 			kredis_user = Kredis.hash redis_key, typed: :string
 			user_hash = kredis_user.to_h
 
-			raise ActiveRecord::RecordNotFound if user_hash.blank? 
+			return nil if user_hash.blank? 
 
 			user = User.new
 
@@ -110,22 +110,25 @@ class User
 	def destroy
 		return if self.username.blank?
 
-		if self.token.present?
-			redis_key = User.token_redis_key(self.token)
-			Kredis.redis.del(redis_key) if Kredis.redis.exists?(redis_key)
-		end
+		delete_token
 
 		redis_key = User.user_redis_key(self.username)
 		Kredis.redis.del(redis_key) if Kredis.redis.exists?(redis_key)
 	end
 
-	def generate_token(exp=30.minutes.from_now)
-
-		# Delete old token
+	def delete_token
 		if self.token.present?
 			redis_key = User.token_redis_key(self.token)
 			Kredis.redis.del(redis_key) if Kredis.redis.exists?(redis_key)
 		end
+
+		self.token = nil
+	end
+
+	def generate_token(exp=30.minutes.from_now)
+
+		# Delete old token
+		delete_token
 
 		# Create and set new token
 		while true
@@ -140,6 +143,15 @@ class User
 		end
 
 		self.token = token
+	end
+
+	def refresh_token!
+		raise Exception.new("username is blank") if self.username.blank?
+
+		generate_token
+
+		kredit_hash = Kredis.hash User.user_redis_key(self.username)
+		kredit_hash["token"] = self.token
 	end
 
 	def set_from_params(params)
