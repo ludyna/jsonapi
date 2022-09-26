@@ -48,7 +48,7 @@ You can use auth/logout to log out and delete the current user token.
 
 I use JSON Serializer (in the app/serializable folder) to help render User objects to JSON.
 
-# What I would add
+## What I would add
 
 - I would limit access to /users endpoints by IPs to add more security.
 - I only tested my controllers using postman.co tools. I would add ruby tests too.
