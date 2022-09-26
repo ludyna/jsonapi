@@ -42,7 +42,9 @@ Authorized POST auth/login refreshes user's token (currently to 30 min) and retu
 It means that API users don't know the token saved in Redis and will not be able to query it even if they get access to Redis.
 API user can then use JSON Web Token received from auth/login to access other API. For test purposes, I created auth/ping, which returns code 200 OK if BearerToken in Authorization headers was set to correct JSON Web Token.
 
-User tokens expire automatically by Redis every 30 min. So if API users want to get another token, they can POST auth/login again
+User tokens expire automatically by Redis every 30 min. So if API users want to get another token, they can POST auth/login again.
+
+API users can use auth/logout to logout and delete the current user token.
 
 # What I would add
 
