@@ -50,6 +50,7 @@ I use JSON Serializer (in the app/serializable folder) to help render User objec
 
 ## What I would add
 
-- I would limit access to /users endpoints by IPs to add more security.
+- Limit access to /users endpoints by IPs to add more security.
 - I only tested my controllers using postman.co tools. I would add ruby tests too.
+- Logging of logins.
 
